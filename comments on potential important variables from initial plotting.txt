@@ -1,0 +1,27 @@
+Variables that appear to have a relationship with TB cases
+- urbanisation (exponential), makes sense
+- population (linear ish), makes sense on same line with urbanisation
+- indigenous (highest numbers with lowest indigenous)
+- timeliness
+
+
+Variables that might have a relationship with TB cases
+- Poor sanitation (seems exponential but at end not expected i.e. end with better sanitation)
+	also catch it airborne apparently so not sure how sanitation would prevent that which would line up with data
+- density
+- illiteracy
+
+
+Variables that dont appear to have a relationship with TB cases
+- poverty
+- unemployment
+- Year
+
+
+Variables that may be interaction terms
+- poverty and density maybe?
+- poor sanitation and poverty, strange as seems its higher cases for less poverty and bettter sanitation
+
+
+Potential model could have population as linear term (or smooth term), and urbanisation and timeliness as smooth terms and 1 or both of the interaction terms and can assess importance from there
+
