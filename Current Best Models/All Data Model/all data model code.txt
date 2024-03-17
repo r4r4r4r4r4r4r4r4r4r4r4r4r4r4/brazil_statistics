@@ -1,0 +1,31 @@
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+library(fields)
+library(maps)
+library(sp)
+library(mgcv) #need for GAM
+
+#get filepath
+cwd <- getwd()
+load("datasets_project.RData")
+
+# best model so far without training and testing data split
+model5 <- gam(TB ~ s(Timeliness, k=60, bs='cs') + s(Urbanisation, k=66, bs='cs') + 
+                s(Poverty, k=70, bs='cs') + s(Density, k=62, bs='cs') +
+                s(lat, lon, k=65, bs='tp') + s(Unemployment, k=67, bs='cs') +
+                s(Poor_Sanitation, k=68, bs='cs') +
+                offset(log(Population)), family=poisson(link='log'), data=TBdata)
+summary(model5)
+par(mfrow=c(2,2))
+gam.check(model5) # residual plots and additional summary info
+par(mfrow=c(3,3))
+plot(model5)
+
+# plotting TB risk and comparing to TB cases
+risk_preds = predict(model5, type='response')
+TBdf$TBrisk = risk_preds
+
+par(mfrow=c(1,2))
+plot.map(TBdf$TBrisk[TBdf$Year==2014],n.levels=7,main="TB Risk for 2014")
+plot.map(TBdf$TB[TBdf$Year==2014],n.levels=7,main="TB Counts for 2014")
