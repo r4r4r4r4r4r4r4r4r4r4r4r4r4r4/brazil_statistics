@@ -143,9 +143,11 @@ plot(model6)
 
 # predicting risk and plotting against known data
 risk_preds = predict(model6, newdata=test_df, type='response')  # think this returns rate and that TB in data is rate but need to confirm
-test_df$TBrisk = risk_preds
+risk_preds
+test_df$TBrisk = risk_preds  # this is the tb counts
+test_df$TBrisk = risk_preds / test_df$Population * 100000   # this is the rate I believe
 
 par(mfrow=c(1,2))
 plot.map(test_df$TBrisk[test_df$Year==2014],n.levels=7,main="Predicted TB Risk for 2014")
 plot.map(TBdata$TB[TBdata$Year==2014],n.levels=7,main="TB Counts for 2014")
-
+mean(test_df$TBrisk)
