@@ -41,9 +41,9 @@ plot.gam(model1)
 
 #-----Understanding Some Relationships in the Data-----
 par(mfrow=c(1,1))
-plot(df$Timeliness, df$TB)   # simple 2d scatter plot to see a variable against TB
+plot(df$Urbanisation, df$TB)   # simple 2d scatter plot to see a variable against TB
 # scatter plot with TB as colour scale to see about potential interaction terms
-ggplot(df, aes(x=lon, y=lat, color=TB)) +
+ggplot(df, aes(x=Poverty, y=Unemployment, color=TB)) +
   geom_point() +
   #xlim(c(21000, 21025)) +
   scale_color_gradient(low = "blue", high = "red", limits=c(0, 1000)) +   # set limits to stop outliers skewing the scale
