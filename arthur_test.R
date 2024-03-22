@@ -9,12 +9,14 @@ library(sf) #need for geojson
 library(geojsonio)
 library(gratia)
 library(hrbrthemes)
+library(geobr)
+library(patchwork)
 
 #get filepath
 cwd <- getwd()
 load("datasets_project.RData")
 
-TBdata$Region <- factor(TBdata$Region)
+#TBdata$Region <- factor(TBdata$Region)
 
 TBdata$real_rate <- (TBdata$TB / TBdata$Population)*100000
 
@@ -96,6 +98,7 @@ risk_preds = predict(model7, newdata=TBdata, type='link') #this returns log of p
 TBdata$pred_risk = (exp(risk_preds) / TBdata$Population) * 100000   #turn predicted cases into predicted risk (TB cases per 100000)
 TBdata$pred_error = TBdata$real_rate - TBdata$pred_risk    #find error - is this a useful metric? 
 
+
 ggplot()+
   geom_tile(data=latlong,aes(x=lon,y=lat,fill=est))+
   xlim(-75,-35)+
@@ -107,15 +110,35 @@ ggplot()+
   theme_minimal()+
   theme(plot.title = element_text(hjust = 0.5))
 
-  ggplot()+
-    scale_fill_gradient2(low = "blue",mid="white", high = "red", name=" ")+
-    geom_sf(data = brasil_outline,aes(fill=latlong$est))+
-    theme_minimal()+
-    theme(plot.title = element_text(hjust = 0.5))
-
 latlong <- smooth_estimates(model7)
 latlong <- subset(latlong, select= c("est","se","lon","lat"))
 latlong <- na.omit(latlong)
 
+#plotting on meso region scale
+meso_region <- read_meso_region(year=2014)#from geobr
+micro_region <- read_micro_region(year=2014)
+
+df <- dplyr::left_join(micro_region,TBdata,by=c("code_micro"="Region"))
+
+
+
+smooth_plot <- ggplot()+
+  geom_tile(data=latlong,aes(x=lon,y=lat,fill=est))+
+  xlim(-75,-35)+
+  xlab("")+
+  ylab("")+
+  scale_fill_gradient2(low = "blue",mid="white", high = "red", name=" ")+
+  geom_sf(data = brasil_outline,fill=NA,size=50)+
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5))
+
+pred_plot <- ggplot()+
+  geom_sf(data=df,aes(fill=pred_risk),size=0.25)+
+  xlim(-75,-35)+
+  labs(fill=" ")+
+  scale_fill_viridis_c()+
+  theme_minimal()
+
+(smooth_plot+pred_plot)+plot_layout(ncol=2)
 
 
